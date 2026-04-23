@@ -28,9 +28,12 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(project(":domain"))
+    implementation(libs.retrofit.core)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.core.ktx)
     implementation(libs.material)

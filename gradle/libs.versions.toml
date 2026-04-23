@@ -11,8 +11,12 @@ composeBom = "2026.02.01"
 jetbrainsKotlinJvm = "2.2.10"
 appcompat = "1.6.1"
 material = "1.10.0"
+
 hilt = "2.59.2"
 ksp = "2.2.10-2.0.2"
+
+retrofit = "3.0.0"
+okhttp = "5.3.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -37,6 +41,11 @@ hilt-core = { group = "com.google.dagger", name = "hilt-core", version.ref = "hi
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 # hilt общий компилятор
 hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hilt" }
+# retrofit
+retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+retrofit-converter-gson = { group = "com.squareup.retrofit2", name = "converter-gson", version.ref = "retrofit" }
+# okhttp
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
