@@ -31,48 +31,40 @@ class CharacterRepositoryImpl @Inject constructor(
 
         val characterDto = api.getCharacterByUrl(url)
 
-        val oneTime = System.currentTimeMillis()
-        Log.d("PERF_TAG", "getCharByURL отработала за: ${oneTime - startTime} мс")
-
-        val domainFilms = characterDto.films.map { url ->
-             api.getFilmByUrl(url).toDomain()
+        val filmsDeferred = characterDto.films.map { url ->
+            async { api.getFilmByUrl(url) }
         }
 
-        val twoTime = System.currentTimeMillis()
-        Log.d("PERF_TAG", "getFilmByURL отработала за: ${twoTime - oneTime} мс")
+        val homeworldDeferred = async { api.getPlanetByUrl(characterDto.homeworld) }
 
-        val domainHomeworld = api.getPlanetByUrl(characterDto.homeworld).toDomain()
-
-        val threeTime = System.currentTimeMillis()
-        Log.d("PERF_TAG", "getPlanetByURL отработала за: ${threeTime - twoTime} мс")
-
-
-        val domainVehicles = characterDto.vehicles.map { url ->
-             api.getVehicleByUrl(url).toDomain()
+        val vehiclesDeferred = characterDto.vehicles.map { url ->
+            async { api.getVehicleByUrl(url) }
         }
 
-        val fourTime = System.currentTimeMillis()
-        Log.d("PERF_TAG", "getVehicleByURL отработала за: ${fourTime - threeTime} мс")
-
-
-        val domainStarships = characterDto.starships.map { url ->
-            api.getStarshipByUrl(url).toDomain()
+        val starshipsDeferred = characterDto.starships.map { url ->
+            async { api.getStarshipByUrl(url) }
         }
 
-        val fiveTime = System.currentTimeMillis()
-        Log.d("PERF_TAG", "getStarshipByURL отработала за: ${fiveTime - fourTime} мс")
-
-
-        val domainSpecies = characterDto.species.map { url ->
-             api.getSpeciesByUrl(url).toDomain()
+        val speciesDeferred = characterDto.species.map { url ->
+            async { api.getSpeciesByUrl(url) }
         }
-
-        val sixTime = System.currentTimeMillis()
-        Log.d("PERF_TAG", "getSpeciesByURL отработала за: ${sixTime - fiveTime} мс")
 
         val netTime = System.currentTimeMillis()
         Log.d("PERF_TAG", "Сеть отработала за: ${netTime - startTime} мс")
 
+        // ожидаем выполнения запросов
+        val filmsDtos = filmsDeferred.awaitAll()
+        val homeworldDto = homeworldDeferred.await()
+        val vehicleDtos = vehiclesDeferred.awaitAll()
+        val starshipsDtos = starshipsDeferred.awaitAll()
+        val speciesDtos = speciesDeferred.awaitAll()
+
+        // маппим
+        val domainFilms = filmsDtos.toDomain()
+        val domainHomeworld = homeworldDto.toDomain()
+        val domainVehicles = vehicleDtos.toDomain()
+        val domainStarships = starshipsDtos.toDomain()
+        val domainSpecies = speciesDtos.toDomain()
 
         return@coroutineScope characterDto.toDomain(
             homeworld = domainHomeworld,

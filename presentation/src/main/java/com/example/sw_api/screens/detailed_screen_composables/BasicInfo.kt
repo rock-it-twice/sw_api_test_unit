@@ -27,7 +27,6 @@ fun BasicInfo(basicInfo: List<Pair<String, String>>){
         Subtitle(stringResource(R.string.h_basic_info))
         Spacer(modifier = Modifier.size(8.dp))
         basicInfo.forEach {
-            println("Мы в цикле")
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
