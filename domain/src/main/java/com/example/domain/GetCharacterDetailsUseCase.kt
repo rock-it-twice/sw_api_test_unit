@@ -3,14 +3,14 @@ package com.example.domain
 import com.example.domain.entities.Character
 import javax.inject.Inject
 
-class GetCharactersUseCase @Inject constructor(
+class GetCharacterDetailsUseCase @Inject constructor(
     private val repository: CharacterRepository
 ){
 
-    suspend operator fun invoke(): Result<List<Character>>{
+    suspend operator fun invoke(url: String): Result<Character>{
         return try {
-            val characters = repository.getCharacters()
-            Result.success(characters)
+            val character = repository.getCharacterByUrl(url)
+            Result.success(character)
         } catch (e: Exception) {
             Result.failure(e)
         }

@@ -1,19 +1,25 @@
 package com.example.data
 
+
+import android.content.Context
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.SecureRandom
-import javax.inject.Singleton
-import javax.net.ssl.TrustManager
 import java.security.cert.X509Certificate
+import java.util.concurrent.TimeUnit
+import javax.inject.Singleton
 import javax.net.ssl.SSLContext
+import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -21,10 +27,18 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideCache(@ApplicationContext context: Context): Cache {
+        val cacheSize = 10 * 1024 * 1024 // 10 МБ
+        return Cache(context.cacheDir, cacheSize.toLong())
+    }
+
+
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(cache: Cache): OkHttpClient {
 
         // Отключаем проверку SSL сертификатов, т.к. у swapi.dev они просрочены.
-
         try {
             val trustAllCerts = arrayOf<TrustManager>(object : X509TrustManager {
                 override fun checkClientTrusted(chain: Array<out X509Certificate>?, authType: String?) {}
@@ -36,12 +50,20 @@ object NetworkModule {
             sslContext.init(null, trustAllCerts, SecureRandom())
 
             return  OkHttpClient.Builder()
+                .cache(cache = cache)
                 .sslSocketFactory(sslContext.socketFactory, trustAllCerts[0] as X509TrustManager)
                 .hostnameVerifier { _,_ -> true }
-                .addInterceptor(HttpLoggingInterceptor().apply {
-                    level = HttpLoggingInterceptor.Level.BODY
+                .addInterceptor{ chain ->
+                    var request = chain.request()
+                    val response = chain.proceed(request)
+                    response.newBuilder()
+                        .header("Cache-Control", "public, max-age=300")
+                        .removeHeader("Pragma")
+                        .build()
                 }
-                ).build()
+                .connectTimeout(45, TimeUnit.SECONDS)
+                .readTimeout(45, TimeUnit.SECONDS)
+                .build()
         }
         catch (e: Exception) {
             throw RuntimeException(e)

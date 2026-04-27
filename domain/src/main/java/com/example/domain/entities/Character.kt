@@ -1,4 +1,4 @@
-package com.example.domain
+package com.example.domain.entities
 
 data class Character(
     val name: String,
@@ -9,11 +9,11 @@ data class Character(
     val eyeColor: String,
     val birthYear: String,
     val gender: String,
-    val homeWorld: String,
-    val films: List<String>,
-    val species: List<String>,
-    val vehicles: List<String>,
-    val starships: List<String>,
+    val homeworld: Planet,
+    val films: List<Film>,
+    val species: List<Species>,
+    val vehicles: List<Vehicle>,
+    val starships: List<Starship>,
     val created: String,
     val edited: String,
     val url: String

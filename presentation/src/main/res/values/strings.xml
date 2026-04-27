@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">sw_api</string>
+    <string name="search_bar_placeholder">Search characters…</string>
+    <string name="main_screen_header">Star War Characters</string>
+    <string name="try_again_button">Try again</string>
+
+    <string name="h_basic_info">Basic information</string>
+    <string name="h_species">Species</string>
+    <string name="h_films">Films</string>
+    <string name="h_ships">Starships</string>
+    <string name="h_homeworld">Home planet</string>
+    <string name="no_spec_info">No species information available</string>
 </resources>

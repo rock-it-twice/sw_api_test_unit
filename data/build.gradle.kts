@@ -29,6 +29,8 @@ android {
 
 dependencies {
     implementation(project(":domain"))
+    implementation(libs.androidx.compose.runtime)
+    implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.retrofit.core)

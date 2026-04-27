@@ -16,38 +16,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.example.sw_api.screens.characters_screen_composables.CharacterList
-import com.example.sw_api.screens.common_composables.Title
 import com.example.sw_api.screens.characters_screen_composables.TryAgainButton
-import com.example.sw_api.viewmodels.CharacterViewModel
-import com.example.sw_api.viewmodels.CharactersUiState
-
+import com.example.sw_api.screens.detailed_screen_composables.DetailedCard
+import com.example.sw_api.viewmodels.DetailsViewModel
+import com.example.sw_api.viewmodels.DetailsUiState
 
 @Composable
-fun CharactersScreen(
-    viewModel: CharacterViewModel = hiltViewModel(),
-    onCharacterClick: (String) -> Unit
+fun DetailsScreen(
+    url: String,
+    viewModel: DetailsViewModel = hiltViewModel(),
+    onGoBackClick: ()-> Unit
 ){
+    val uiState = viewModel.characterState.collectAsStateWithLifecycle()
 
-    val uiState = viewModel.charactersState.collectAsStateWithLifecycle()
-
-    Column(
-        modifier = Modifier.fillMaxSize().padding(top = 20.dp)
-    ) {
-        Title(){}
-        Spacer(modifier = Modifier.size(30.dp))
-        when (val state = uiState.value) {
-            is CharactersUiState.Loading -> {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
+    Column(modifier = Modifier.fillMaxSize().padding(top = 20.dp)) {
+        when (val state = uiState.value){
+            is DetailsUiState.Loading -> {
+                Box(modifier = Modifier.fillMaxSize()){
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
             }
-            is CharactersUiState.Content -> {
-                CharacterList(state.characters, onClick = onCharacterClick)
+            is DetailsUiState.Content -> {
+                DetailedCard(state.character) { onGoBackClick() }
             }
-            is CharactersUiState.Error -> {
+            is DetailsUiState.Error -> {
                 Column(
                     modifier = Modifier.fillMaxSize(),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -58,7 +50,7 @@ fun CharactersScreen(
                         color = Color.Red
                     )
                     Spacer(modifier = Modifier.size(10.dp))
-                    TryAgainButton { viewModel.loadCharacters() }
+                    TryAgainButton { viewModel.loadCharacter(url) }
                 }
             }
         }

@@ -1,10 +1,6 @@
-package com.example.data
+package com.example.data.entities_dto
 
-import com.example.data.mappers.toDomain
-import com.example.domain.Character
-import com.example.domain.CharacterRepository
 import com.google.gson.annotations.SerializedName
-import javax.inject.Inject
 
 data class CharacterDto(
     @SerializedName("name") val name: String,
@@ -15,7 +11,7 @@ data class CharacterDto(
     @SerializedName("eye_color") val eyeColor: String,
     @SerializedName("birth_year") val birthYear: String,
     @SerializedName("gender") val gender: String,
-    @SerializedName("homeworld") val homeWorld: String,
+    @SerializedName("homeworld") val homeworld: String,
     @SerializedName("films") val films: List<String>,
     @SerializedName("species") val species: List<String>,
     @SerializedName("vehicles") val vehicles: List<String>,
@@ -24,6 +20,3 @@ data class CharacterDto(
     @SerializedName("edited") val edited: String,
     @SerializedName("url") val url: String
 )
-
-
-
